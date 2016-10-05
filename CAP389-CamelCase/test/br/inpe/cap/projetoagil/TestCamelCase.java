@@ -64,20 +64,20 @@ public class TestCamelCase {
 	
 	@Test
 	public void palavraESigla() {
-		List<String> palavras = CamelCase.converterCamelCase("númeroCPF");
+		List<String> palavras = CamelCase.converterCamelCase("numeroCPF");
 		String resultado1 = palavras.get(0);
 		String resultado2 = palavras.get(1);
-		assertEquals("número", resultado1);
+		assertEquals("numero", resultado1);
 		assertEquals("CPF", resultado2);
 	}
 	
 	@Test
 	public void adicionadaPalavraAposASigla() {
-		List<String> palavras = CamelCase.converterCamelCase("númeroCPFContribuinte");
+		List<String> palavras = CamelCase.converterCamelCase("numeroCPFContribuinte");
 		String resultado1 = palavras.get(0);
 		String resultado2 = palavras.get(1);
 		String resultado3 = palavras.get(2);
-		assertEquals("número", resultado1);
+		assertEquals("numero", resultado1);
 		assertEquals("CPF", resultado2);
 		assertEquals("contribuinte", resultado3);
 	}
@@ -104,6 +104,12 @@ public class TestCamelCase {
 	public void palavraInvalidaComecandoComNumero() {
 		CamelCase.converterCamelCase("10Primeiros");
 		fail("Palavra não deveria começar com números.");
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void palavraInvalidaComecandoComCaracteresEspeciais() {
+		CamelCase.converterCamelCase("#nomeComposto");
+		fail("Caracteres especiais não deveriam ser permitidos.");
 	}
 	
 	@Test(expected=IllegalArgumentException.class)

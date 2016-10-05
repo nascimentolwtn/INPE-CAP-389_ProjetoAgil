@@ -12,7 +12,7 @@ public class CamelCase {
 	private static final String REGEX_SUBLINHADO = "$1" + SUBLINHADO + "$2";
 	
 	private static final Pattern PATTERN_NUMEROS = Pattern.compile("^(\\d+.*)");
-	private static final Pattern PATTERN_CARACTERES_ESPECIAIS = Pattern.compile("\\p{Punct}");
+	private static final Pattern PATTERN_CARACTERES_ESPECIAIS = Pattern.compile("\\W");
 	
 	public static List<String> converterCamelCase(String original) {
 		checkValidString(original);
@@ -36,7 +36,7 @@ public class CamelCase {
 		if(PATTERN_NUMEROS.matcher(original).matches()) {
 			throw new IllegalArgumentException("Palavra não deve começar com números.");
 		}
-		if(PATTERN_CARACTERES_ESPECIAIS.matcher(original).matches()) {
+		if(PATTERN_CARACTERES_ESPECIAIS.matcher(original).find()) {
 			throw new IllegalArgumentException(
 					"Caracteres especiais não são permitidos, somente letras e números.");
 		}
@@ -44,6 +44,11 @@ public class CamelCase {
 }
 
 /*
+
+	private static final Pattern PATTERN_NUMEROS = Pattern.compile("^(\\d+.*)");
+	private static final Pattern PATTERN_CARACTERES_ESPECIAIS = Pattern.compile("\\p{Punct}");
+
+	private static final Pattern PATTERN_CARACTERES_ESPECIAIS = Pattern.compile("[^a-zA-Z0-9]|\\W+.*");
 
 	private static final String REGEX = "([^_A-Z])([A-Z])|(?<=[A-Z])(?=[A-Z][a-z])|(?<=[a-z])(?=[0-9])";
 
