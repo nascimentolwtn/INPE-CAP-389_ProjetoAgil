@@ -34,7 +34,7 @@ public class TestCaixaEletronico {
 		}});
 		assertEquals("Usuário Autenticado", caixa.logar(numeroContaTeste));
 		assertEquals("Retire seu dinheiro", caixa.sacar(0));
-		assertEquals("Depósito recebido com sucesso", caixa.depositar());
+		assertEquals("Depósito recebido com sucesso", caixa.depositar(0));
 		assertEquals("O saldo é R$ 0,00", caixa.saldo());
 	}
 	
@@ -75,7 +75,7 @@ public class TestCaixaEletronico {
 	@SuppressWarnings("unused")
 	@Test(expected = UsuarioNaoLogadoException.class)
 	public void executarOperacaoDepositarSemUsuarioLogado() {
-		String depositar = caixa.depositar();
+		String depositar = caixa.depositar(0);
 		fail("Operação não deveria ser executada sem nenhum usuário logado no caixa.");
 	}
 	
@@ -115,6 +115,19 @@ public class TestCaixaEletronico {
 		assertEquals("Usuário Autenticado", caixa.logar(numeroContaTeste));
 		assertEquals("Saldo insuficiente", caixa.sacar(350));
 		assertEquals("O saldo é R$ 252,50", caixa.saldo());
+	}
+	
+	@Test
+	public void operacaoDeDeposito() {
+		ContaCorrente contaCorrente = new ContaCorrente(numeroContaTeste);
+		contaCorrente.setSaldo(252.50);
+		ctx.checking(new Expectations() {{
+			oneOf(servicoRemotoMock).recuperarConta(numeroContaTeste);
+			will(returnValue(contaCorrente));
+		}});
+		assertEquals("Usuário Autenticado", caixa.logar(numeroContaTeste));
+		assertEquals("Depósito recebido com sucesso", caixa.depositar(200d));
+		assertEquals("O saldo é R$ 452,50", caixa.saldo());
 	}
 	
 }

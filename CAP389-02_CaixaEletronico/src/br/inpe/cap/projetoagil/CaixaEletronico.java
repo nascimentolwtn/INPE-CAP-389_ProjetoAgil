@@ -33,8 +33,9 @@ public class CaixaEletronico {
 		}
 	}
 
-	public String depositar() {
+	public String depositar(double valorDepositado) {
 		if(this.contaCorrenteAtual != null) {
+			this.contaCorrenteAtual.creditar(valorDepositado);
 			return "Depósito recebido com sucesso";
 		} else {
 			throw new UsuarioNaoLogadoException();
