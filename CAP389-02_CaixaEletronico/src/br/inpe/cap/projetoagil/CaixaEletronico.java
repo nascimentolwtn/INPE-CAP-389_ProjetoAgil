@@ -22,9 +22,10 @@ public class CaixaEletronico {
 		}
 	}
 
-	public String sacar(double valorSacado) {
+	public String sacar(double valorSacado) throws HardwareMalfunctionException {
 		if(this.contaCorrenteAtual != null) {
 			if(this.contaCorrenteAtual.getSaldo() >= valorSacado) {
+				this.hardware.entregarDinheiro();
 				this.contaCorrenteAtual.debitar(valorSacado);
 				return "Retire seu dinheiro";
 			} else {
@@ -35,8 +36,9 @@ public class CaixaEletronico {
 		}
 	}
 
-	public String depositar(double valorDepositado) {
+	public String depositar(double valorDepositado) throws HardwareMalfunctionException {
 		if(this.contaCorrenteAtual != null) {
+			this.hardware.lerEnvelope();
 			this.contaCorrenteAtual.creditar(valorDepositado);
 			return "Depósito recebido com sucesso";
 		} else {

@@ -6,7 +6,6 @@ import static org.junit.Assert.fail;
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -37,6 +36,8 @@ public class TestCaixaEletronico {
 			will(returnValue(numeroContaTeste));
 			oneOf(servicoRemotoMock).recuperarConta(numeroContaTeste);
 			will(returnValue(contaCorrente));
+			oneOf(hardwareMock).entregarDinheiro();
+			oneOf(hardwareMock).lerEnvelope();
 		}});
 		
 		assertEquals("Usuário Autenticado", caixa.logar());
@@ -80,14 +81,14 @@ public class TestCaixaEletronico {
 	
 	@SuppressWarnings("unused")
 	@Test(expected = UsuarioNaoLogadoException.class)
-	public void executarOperacaoSacarSemUsuarioLogado() {
+	public void executarOperacaoSacarSemUsuarioLogado() throws HardwareMalfunctionException {
 		String sacar = caixa.sacar(0);
 		fail("Operação não deveria ser executada sem nenhum usuário logado no caixa.");
 	}
 	
 	@SuppressWarnings("unused")
 	@Test(expected = UsuarioNaoLogadoException.class)
-	public void executarOperacaoDepositarSemUsuarioLogado() {
+	public void executarOperacaoDepositarSemUsuarioLogado() throws HardwareMalfunctionException {
 		String depositar = caixa.depositar(0);
 		fail("Operação não deveria ser executada sem nenhum usuário logado no caixa.");
 	}
@@ -102,6 +103,7 @@ public class TestCaixaEletronico {
 			oneOf(servicoRemotoMock).recuperarConta(numeroContaTeste);
 			will(returnValue(contaCorrente));
 		}});
+		
 		assertEquals("Usuário Autenticado", caixa.logar());
 		assertEquals("O saldo é R$ 252,50", caixa.saldo());
 	}
@@ -115,7 +117,9 @@ public class TestCaixaEletronico {
 			will(returnValue(numeroContaTeste));
 			oneOf(servicoRemotoMock).recuperarConta(numeroContaTeste);
 			will(returnValue(contaCorrente));
+			oneOf(hardwareMock).entregarDinheiro();
 		}});
+		
 		assertEquals("Usuário Autenticado", caixa.logar());
 		assertEquals("Retire seu dinheiro", caixa.sacar(50));
 		assertEquals("O saldo é R$ 202,50", caixa.saldo());
@@ -130,7 +134,9 @@ public class TestCaixaEletronico {
 			will(returnValue(numeroContaTeste));
 			oneOf(servicoRemotoMock).recuperarConta(numeroContaTeste);
 			will(returnValue(contaCorrente));
+			never(hardwareMock).entregarDinheiro();
 		}});
+		
 		assertEquals("Usuário Autenticado", caixa.logar());
 		assertEquals("Saldo insuficiente", caixa.sacar(350));
 		assertEquals("O saldo é R$ 252,50", caixa.saldo());
@@ -145,29 +151,28 @@ public class TestCaixaEletronico {
 			will(returnValue(numeroContaTeste));
 			oneOf(servicoRemotoMock).recuperarConta(numeroContaTeste);
 			will(returnValue(contaCorrente));
+			oneOf(hardwareMock).lerEnvelope();
 		}});
+		
 		assertEquals("Usuário Autenticado", caixa.logar());
 		assertEquals("Depósito recebido com sucesso", caixa.depositar(200));
 		assertEquals("O saldo é R$ 452,50", caixa.saldo());
 	}
 	
-	@Ignore
 	@Test(expected=HardwareMalfunctionException.class)
 	public void tentarEfetuarLoginComFalhaDeHardware() throws HardwareMalfunctionException {
-		ContaCorrente contaCorrente = new ContaCorrente(numeroContaTeste);
 		ctx.checking(new Expectations() {{
 			oneOf(hardwareMock).pegarNumeroDaContaCartao();
-			will(returnValue(numeroContaTeste));
-			oneOf(servicoRemotoMock).recuperarConta(numeroContaTeste);
-			will(returnValue(contaCorrente));
+				will(throwException(new HardwareMalfunctionException()));
+			never(servicoRemotoMock).recuperarConta(numeroContaTeste);
 		}});
-		assertEquals("Usuário Autenticado", caixa.logar());
+		
+		caixa.logar();
+		fail("Falha de hardware não deveria permitir realizar operações.");
 	}
 	
-	@Ignore
-	@Test(expected=HardwareMalfunctionException.class)
+	@Test
 	public void operacaoDeSaqueComFalhaDeHardware() throws HardwareMalfunctionException {
-		fail("Implementar!");
 		ContaCorrente contaCorrente = new ContaCorrente(numeroContaTeste);
 		contaCorrente.setSaldo(252.50);
 		ctx.checking(new Expectations() {{
@@ -175,16 +180,21 @@ public class TestCaixaEletronico {
 			will(returnValue(numeroContaTeste));
 			oneOf(servicoRemotoMock).recuperarConta(numeroContaTeste);
 			will(returnValue(contaCorrente));
+			oneOf(hardwareMock).entregarDinheiro();
+				will(throwException(new HardwareMalfunctionException()));
 		}});
+		
 		assertEquals("Usuário Autenticado", caixa.logar());
-		assertEquals("Retire seu dinheiro", caixa.sacar(50));
-		assertEquals("O saldo é R$ 202,50", caixa.saldo());
+		try {
+			caixa.sacar(50);
+			fail("Falha de hardware não deveria permitir realizar operações.");
+		} catch (HardwareMalfunctionException e) {
+			assertEquals("O saldo é R$ 252,50", caixa.saldo());
+		}
 	}
 	
-	@Ignore
-	@Test(expected=HardwareMalfunctionException.class)
+	@Test
 	public void operacaoDeDepositoComFalhaDeHardware() throws HardwareMalfunctionException {
-		fail("Implementar!");
 		ContaCorrente contaCorrente = new ContaCorrente(numeroContaTeste);
 		contaCorrente.setSaldo(252.50);
 		ctx.checking(new Expectations() {{
@@ -192,10 +202,17 @@ public class TestCaixaEletronico {
 			will(returnValue(numeroContaTeste));
 			oneOf(servicoRemotoMock).recuperarConta(numeroContaTeste);
 			will(returnValue(contaCorrente));
+			oneOf(hardwareMock).lerEnvelope();
+				will(throwException(new HardwareMalfunctionException()));
 		}});
+		
 		assertEquals("Usuário Autenticado", caixa.logar());
-		assertEquals("Depósito recebido com sucesso", caixa.depositar(200));
-		assertEquals("O saldo é R$ 452,50", caixa.saldo());
+		try {
+			caixa.depositar(200);
+			fail("Falha de hardware não deveria permitir realizar operações.");
+		} catch (HardwareMalfunctionException e) {
+			assertEquals("O saldo é R$ 252,50", caixa.saldo());
+		}
 	}
 	
 }
