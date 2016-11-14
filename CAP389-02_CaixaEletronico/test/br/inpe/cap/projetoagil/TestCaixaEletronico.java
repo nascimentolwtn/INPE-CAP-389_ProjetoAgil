@@ -11,6 +11,7 @@ import org.junit.Test;
 public class TestCaixaEletronico {
 	
 	private CaixaEletronico caixa;
+<<<<<<< HEAD
 	private ServicoRemoto servicoRemotoMock;
 	
 	@Rule
@@ -21,10 +22,24 @@ public class TestCaixaEletronico {
 		caixa = new CaixaEletronico();
 		servicoRemotoMock = ctx.mock(ServicoRemoto.class);
 		caixa.setServicoRemoto(servicoRemotoMock);
+=======
+	
+	@Rule
+	public JUnitRuleMockery ctx = new JUnitRuleMockery();
+	
+	@Before
+	public void setUp() {
+		caixa = new CaixaEletronico();
+>>>>>>> branch 'master' of https://github.com/nascimentolwtn/INPE-CAP-389_ProjetoAgil.git
 	}
 	
 	@Test
 	public void exibicaoMensagensCaixaEletronico() {
+<<<<<<< HEAD
+=======
+		final ServicoRemoto servicoRemotoMock = ctx.mock(ServicoRemoto.class);
+		caixa.setServicoRemoto(servicoRemotoMock);
+>>>>>>> branch 'master' of https://github.com/nascimentolwtn/INPE-CAP-389_ProjetoAgil.git
 		String numeroContaTeste = "123456";
 		ContaCorrente contaCorrente = new ContaCorrente(numeroContaTeste);
 		ctx.checking(new Expectations() {{
@@ -39,6 +54,7 @@ public class TestCaixaEletronico {
 	
 	@Test
 	public void recuperarConta() {
+<<<<<<< HEAD
 		String numeroContaTeste = "123456";
 		ContaCorrente contaCorrente = new ContaCorrente(numeroContaTeste);
 		ctx.checking(new Expectations() {{
@@ -50,6 +66,24 @@ public class TestCaixaEletronico {
 	
 	@Test
 	public void logarUsuarioNaoIdentificado() {
+=======
+		final ServicoRemoto servicoRemotoMock = ctx.mock(ServicoRemoto.class);
+		caixa.setServicoRemoto(servicoRemotoMock);
+		String numeroContaTeste = "123456";
+		ContaCorrente contaCorrente = new ContaCorrente(numeroContaTeste);
+		ctx.checking(new Expectations() {{
+			oneOf(servicoRemotoMock).recuperarConta(numeroContaTeste);
+			will(returnValue(contaCorrente));
+		}});
+		assertEquals("Usuário Autenticado", caixa.logar(numeroContaTeste));
+	}
+	
+	@Test
+	public void logarUsuarioNaoIdentificado() {
+		CaixaEletronico caixa = new CaixaEletronico();
+		final ServicoRemoto servicoRemotoMock = ctx.mock(ServicoRemoto.class);
+		caixa.setServicoRemoto(servicoRemotoMock);
+>>>>>>> branch 'master' of https://github.com/nascimentolwtn/INPE-CAP-389_ProjetoAgil.git
 		String numeroContaInvalido = "123";
 		ctx.checking(new Expectations() {{
 			oneOf(servicoRemotoMock).recuperarConta(numeroContaInvalido);
