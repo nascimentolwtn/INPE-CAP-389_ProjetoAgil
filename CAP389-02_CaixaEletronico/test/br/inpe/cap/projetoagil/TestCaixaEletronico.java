@@ -11,6 +11,7 @@ import org.junit.Test;
 
 public class TestCaixaEletronico {
 	
+	private static final String numeroContaTeste = "123456";
 	private CaixaEletronico caixa;
 	private ServicoRemoto servicoRemotoMock;
 	
@@ -26,7 +27,6 @@ public class TestCaixaEletronico {
 	
 	@Test
 	public void exibicaoMensagensCaixaEletronico() {
-		String numeroContaTeste = "123456";
 		ContaCorrente contaCorrente = new ContaCorrente(numeroContaTeste);
 		ctx.checking(new Expectations() {{
 			oneOf(servicoRemotoMock).recuperarConta(numeroContaTeste);
@@ -40,7 +40,6 @@ public class TestCaixaEletronico {
 	
 	@Test
 	public void recuperarConta() {
-		String numeroContaTeste = "123456";
 		ContaCorrente contaCorrente = new ContaCorrente(numeroContaTeste);
 		ctx.checking(new Expectations() {{
 			oneOf(servicoRemotoMock).recuperarConta(numeroContaTeste);
@@ -82,7 +81,6 @@ public class TestCaixaEletronico {
 	
 	@Test
 	public void valorDoSaldoCorrespondente() {
-		String numeroContaTeste = "123456";
 		ContaCorrente contaCorrente = new ContaCorrente(numeroContaTeste);
 		contaCorrente.setSaldo(252.50);
 		ctx.checking(new Expectations() {{
@@ -95,7 +93,6 @@ public class TestCaixaEletronico {
 	
 	@Test
 	public void operacaoDeSaqueComSucesso() {
-		String numeroContaTeste = "123456";
 		ContaCorrente contaCorrente = new ContaCorrente(numeroContaTeste);
 		contaCorrente.setSaldo(252.50);
 		ctx.checking(new Expectations() {{
@@ -103,8 +100,21 @@ public class TestCaixaEletronico {
 			will(returnValue(contaCorrente));
 		}});
 		assertEquals("Usuário Autenticado", caixa.logar(numeroContaTeste));
-		assertEquals("Retire seu dinheiro", caixa.sacar(50d));
+		assertEquals("Retire seu dinheiro", caixa.sacar(50));
 		assertEquals("O saldo é R$ 202,50", caixa.saldo());
+	}
+	
+	@Test
+	public void operacaoDeSaqueComSaldoInsuficiente() {
+		ContaCorrente contaCorrente = new ContaCorrente(numeroContaTeste);
+		contaCorrente.setSaldo(252.50);
+		ctx.checking(new Expectations() {{
+			oneOf(servicoRemotoMock).recuperarConta(numeroContaTeste);
+			will(returnValue(contaCorrente));
+		}});
+		assertEquals("Usuário Autenticado", caixa.logar(numeroContaTeste));
+		assertEquals("Saldo insuficiente", caixa.sacar(350));
+		assertEquals("O saldo é R$ 252,50", caixa.saldo());
 	}
 	
 }
