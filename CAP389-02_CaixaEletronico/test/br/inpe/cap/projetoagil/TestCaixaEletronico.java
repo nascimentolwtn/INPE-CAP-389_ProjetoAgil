@@ -9,6 +9,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import br.inpe.cap.projetoagil.exception.HardwareMalfunctionException;
+import br.inpe.cap.projetoagil.exception.UsuarioNaoLogadoException;
+
 public class TestCaixaEletronico {
 	
 	private static final String numeroContaTeste = "123456";

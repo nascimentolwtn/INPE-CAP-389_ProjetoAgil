@@ -3,6 +3,9 @@ package br.inpe.cap.projetoagil;
 import java.text.NumberFormat;
 import java.util.Locale;
 
+import br.inpe.cap.projetoagil.exception.HardwareMalfunctionException;
+import br.inpe.cap.projetoagil.exception.UsuarioNaoLogadoException;
+
 public class CaixaEletronico {
 
 	private static final NumberFormat SALDO_FORMAT = 

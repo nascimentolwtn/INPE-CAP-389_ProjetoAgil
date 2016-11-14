@@ -1,4 +1,4 @@
-package br.inpe.cap.projetoagil;
+package br.inpe.cap.projetoagil.exception;
 
 public class UsuarioNaoLogadoException extends RuntimeException {
 
