@@ -9,14 +9,16 @@ public class CaixaEletronico {
 			NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
 
 	private ServicoRemoto servicoRemoto;
+	private Hardware hardware;
 	private ContaCorrente contaCorrenteAtual;
 	
-	public String logar(String numeroConta) {
+	public String logar() throws HardwareMalfunctionException {
+		String numeroConta = hardware.pegarNumeroDaContaCartao();
 		this.contaCorrenteAtual = servicoRemoto.recuperarConta(numeroConta);
 		if(this.contaCorrenteAtual != null) {
 			return "Usuário Autenticado";
 		} else {
-			return "Usuário não encontrado";
+			return "Não foi possível autenticar o usuário";
 		}
 	}
 
@@ -53,6 +55,10 @@ public class CaixaEletronico {
 
 	public void setServicoRemoto(ServicoRemoto servicoRemoto) {
 		this.servicoRemoto = servicoRemoto;
+	}
+
+	public void setHardware(Hardware hardware) {
+		this.hardware = hardware;
 	}
 
 }
