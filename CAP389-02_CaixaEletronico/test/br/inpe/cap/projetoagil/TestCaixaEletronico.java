@@ -1,6 +1,7 @@
 package br.inpe.cap.projetoagil;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnitRuleMockery;
@@ -34,7 +35,7 @@ public class TestCaixaEletronico {
 		assertEquals("Usuário Autenticado", caixa.logar(numeroContaTeste));
 		assertEquals("Retire seu dinheiro", caixa.sacar());
 		assertEquals("Depósito recebido com sucesso", caixa.depositar());
-		assertEquals("O saldo é R$xx,xx", caixa.saldo());
+		assertEquals("O saldo é R$ 0,00", caixa.saldo());
 	}
 	
 	@Test
@@ -56,6 +57,40 @@ public class TestCaixaEletronico {
 			will(returnValue(null));
 		}});
 		assertEquals("Usuário não encontrado", caixa.logar(numeroContaInvalido));
+	}
+	
+	@SuppressWarnings("unused")
+	@Test(expected = UsuarioNaoLogadoException.class)
+	public void executarOperacaoSaldoSemUsuarioLogado() {
+		String saldo = caixa.saldo();
+		fail("Operação não deveria ser executada sem nenhum usuário logado no caixa.");
+	}
+	
+	@SuppressWarnings("unused")
+	@Test(expected = UsuarioNaoLogadoException.class)
+	public void executarOperacaoSacarSemUsuarioLogado() {
+		String sacar = caixa.sacar();
+		fail("Operação não deveria ser executada sem nenhum usuário logado no caixa.");
+	}
+	
+	@SuppressWarnings("unused")
+	@Test(expected = UsuarioNaoLogadoException.class)
+	public void executarOperacaoDepositarSemUsuarioLogado() {
+		String depositar = caixa.depositar();
+		fail("Operação não deveria ser executada sem nenhum usuário logado no caixa.");
+	}
+	
+	@Test
+	public void valorDoSaldoCorrespondente() {
+		String numeroContaTeste = "123456";
+		ContaCorrente contaCorrente = new ContaCorrente(numeroContaTeste);
+		contaCorrente.setSaldo(252.50);
+		ctx.checking(new Expectations() {{
+			oneOf(servicoRemotoMock).recuperarConta(numeroContaTeste);
+			will(returnValue(contaCorrente));
+		}});
+		assertEquals("Usuário Autenticado", caixa.logar(numeroContaTeste));
+		assertEquals("O saldo é R$ 252,50", caixa.saldo());
 	}
 	
 }
