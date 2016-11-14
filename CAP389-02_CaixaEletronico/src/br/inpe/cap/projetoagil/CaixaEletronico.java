@@ -20,9 +20,14 @@ public class CaixaEletronico {
 		}
 	}
 
-	public String sacar() {
+	public String sacar(double valorSacado) {
 		if(this.contaCorrenteAtual != null) {
-			return "Retire seu dinheiro";
+			if(this.contaCorrenteAtual.getSaldo() >= valorSacado) {
+				this.contaCorrenteAtual.debitar(valorSacado);
+				return "Retire seu dinheiro";
+			} else {
+				return "Saldo insuficiente";
+			}
 		} else {
 			throw new UsuarioNaoLogadoException();
 		}

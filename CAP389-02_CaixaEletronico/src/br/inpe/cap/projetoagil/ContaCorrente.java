@@ -24,5 +24,9 @@ public class ContaCorrente {
 	public double getSaldo() {
 		return saldo;
 	}
+
+	public void debitar(double valorSacado) {
+		this.saldo = saldo - valorSacado;
+	}
 	
 }
