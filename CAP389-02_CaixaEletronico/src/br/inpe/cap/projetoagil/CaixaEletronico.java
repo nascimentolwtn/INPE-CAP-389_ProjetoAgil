@@ -2,8 +2,16 @@ package br.inpe.cap.projetoagil;
 
 public class CaixaEletronico {
 
-	public String logar() {
-		return "Usuário Autenticado";
+	private ServicoRemoto servicoRemoto;
+	private ContaCorrente contaCorrenteAtual;
+
+	public String logar(String numeroConta) {
+		this.contaCorrenteAtual = servicoRemoto.recuperarConta(numeroConta);
+		if(this.contaCorrenteAtual != null) {
+			return "Usuário Autenticado";
+		} else {
+			return "Usuário não encontrado";
+		}
 	}
 
 	public String sacar() {
@@ -16,6 +24,10 @@ public class CaixaEletronico {
 
 	public String saldo() {
 		return "O saldo é R$xx,xx";
+	}
+
+	public void setServicoRemoto(ServicoRemoto servicoRemoto) {
+		this.servicoRemoto = servicoRemoto;
 	}
 
 }
