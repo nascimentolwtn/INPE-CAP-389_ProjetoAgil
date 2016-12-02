@@ -15,32 +15,40 @@ public class ArrayFactory {
         for (int i : result) {
         	result[i] = randomBetweenMinus10And10(r);
 		}
-        
-        for (int i = 0; i < result.length; i++) {
-        	int randomIndex = randomBetweenArrayLenght(r, result.length);
-        	int tries = 1;
-			searchCandidates(r, result, randomIndex, tries);
-		}
+
+        if(somaArray(result) != 0) {
+        	searchCandidates(r, result);
+        }
         
         return result;
     }
 
-	private static void searchCandidates(Random r, int[] result, int randomIndex, int tries) {
+    @SuppressWarnings("unused")
+	private static void searchCandidates(Random r, int[] result) {
+		int randomIndex = randomBetweenArrayLenght(r, result.length);
 		int randomCandidate = randomBetweenMinus10And10(r);
-    	int[] copyOfResult = Arrays.copyOf(result, result.length);
-		int somaArray = somaArray(copyOfResult);
-		if(somaArray == 0)
-			return;
-		while(somaArray != 0) {
-			randomCandidate = randomBetweenMinus10And10(r);
+
+		int[] copyOfResult = null;
+    	Integer somaArray = null;
+		int tries = 1;
+		do {
+			copyOfResult = Arrays.copyOf(result, result.length);
 			copyOfResult[randomIndex] = randomCandidate;
-			
 			somaArray = somaArray(copyOfResult);
-			System.out.println(tries++);
-//			if(somaArray != 0) {
-//				searchCandidates(r, result, randomIndex, ++tries);
-//			}
-		}
+			
+			if (somaArray != 0) {
+				if (somaArray < 0 && randomCandidate < 0 || somaArray > 0 && randomCandidate > 0) {
+					randomCandidate *= -1;
+					result[randomIndex] = randomCandidate;
+				} 
+				randomCandidate = randomBetweenMinus10And10(r);
+				randomIndex = randomBetweenArrayLenght(r, result.length);
+				tries++;
+			}
+			
+		} while (somaArray != 0);
+		
+//		System.out.println(result.length + "=" + tries);
 		result[randomIndex] = randomCandidate;
 	}
 
