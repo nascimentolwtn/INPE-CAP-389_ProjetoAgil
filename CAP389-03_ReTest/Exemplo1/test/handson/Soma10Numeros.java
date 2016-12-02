@@ -29,7 +29,7 @@ public class Soma10Numeros {
     @Test
     @ReTest(10)
     @SaveBrokenTestDataFiles(filePath = TEMP_DIR)
-    @LoadTestFromDataFiles(filePath = {TEMP_DIR + "\\testArrayDeTamanho2.csv"})
+    @LoadTestFromDataFiles(filePath = {TEMP_DIR + "\\testArrayDeTamanho2_BrokenTest.csv"})
     public void testArrayDeTamanho2(@RandomParam Random r) throws InterruptedException {
         int tamanhoArray = 2;
 		int[] result = ArrayFactory.gerarArrayComSomatoriaZero(tamanhoArray, r);
@@ -39,7 +39,7 @@ public class Soma10Numeros {
     @Test
     @ReTest(10)
     @SaveBrokenTestDataFiles(filePath = TEMP_DIR)
-    @LoadTestFromDataFiles(filePath = {TEMP_DIR + "\\testArrayDeTamanho3.csv"})
+    @LoadTestFromDataFiles(filePath = {TEMP_DIR + "\\testArrayDeTamanho3_BrokenTest.csv"})
     public void testArrayDeTamanho3(@RandomParam Random r) throws InterruptedException {
         int tamanhoArray = 3;
 		int[] result = ArrayFactory.gerarArrayComSomatoriaZero(tamanhoArray, r);
@@ -49,7 +49,7 @@ public class Soma10Numeros {
     @Test
     @ReTest(10)
     @SaveBrokenTestDataFiles(filePath = TEMP_DIR)
-    @LoadTestFromDataFiles(filePath = {TEMP_DIR + "\\testArrayDeTamanho10.csv"})
+    @LoadTestFromDataFiles(filePath = {TEMP_DIR + "\\testArrayDeTamanho10_BrokenTest.csv"})
     public void testArrayDeTamanho10(@RandomParam Random r) throws InterruptedException {
         int tamanhoArray = 10;
 		int[] result = ArrayFactory.gerarArrayComSomatoriaZero(tamanhoArray, r);
@@ -59,10 +59,21 @@ public class Soma10Numeros {
     @Test
     @ReTest(10)
     @SaveBrokenTestDataFiles(filePath = TEMP_DIR)
-    @LoadTestFromDataFiles(filePath = {TEMP_DIR + "\\testArrayDeTamanho100.csv"})
+    @LoadTestFromDataFiles(filePath = {TEMP_DIR + "\\testArrayDeTamanho100_BrokenTest.csv"})
     public void testArrayDeTamanho100(@RandomParam Random r) throws InterruptedException {
         int tamanhoArray = 100;
 		int[] result = ArrayFactory.gerarArrayComSomatoriaZero(tamanhoArray, r);
+		assertArrayComSomatoriaZero(tamanhoArray, result);
+    }
+
+    @Test
+    @ReTest(1000)
+    @SaveBrokenTestDataFiles(filePath = TEMP_DIR)
+    @LoadTestFromDataFiles(filePath = TEMP_DIR + "\\testArrayDeTamanho1000_BrokenTest.csv")
+    public void testArrayDeTamanho1000(@RandomParam Random r) throws InterruptedException {
+        int tamanhoArray = 1000;
+		int[] result = ArrayFactory.gerarArrayComSomatoriaZero(tamanhoArray, r);
+		Thread.sleep(r.nextInt(100) + 1);
 		assertArrayComSomatoriaZero(tamanhoArray, result);
     }
 
@@ -70,8 +81,8 @@ public class Soma10Numeros {
 		assertEquals(tamanhoArray, result.length);
 		int soma = 0;
 		for (int i : result) {
-			assertTrue(i > -10 && i < 10);
-			soma  += i;
+			assertTrue(i >= -10 && i <= 10);
+			soma += i;
 		}
 		assertEquals(0, soma);
 	}
